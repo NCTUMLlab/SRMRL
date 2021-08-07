@@ -44,7 +44,6 @@ flake8-import-order==0.18.1
 flake8-polyfill==1.0.2
 flatbuffers==1.12
 future==0.18.2
--e git+https://github.com/rlworkgroup/garage.git@90b60905b29cea8f8373c6732ced0cadf8489b0c#egg=garage
 gast==0.3.3
 glfw==2.1.0
 google-api-core==1.26.3
