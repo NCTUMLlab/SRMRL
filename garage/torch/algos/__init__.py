@@ -18,10 +18,8 @@ from garage.torch.algos.sac import SAC
 from garage.torch.algos.mtsac import MTSAC
 from garage.torch.algos.pearl import PEARL
 from garage.torch.algos.srmrl import SRMRL
-from garage.torch.algos.srmrl_h import SRMRL_h
-from garage.torch.algos.skill_sac import SkillSAC
-from garage.torch.algos.skill_mtsac import SkillMTSAC
+
 __all__ = [
     'BC', 'DDPG', 'DQN', 'VPG', 'PPO', 'TD3', 'TRPO', 'MAMLPPO', 'MAMLTRPO',
-    'MAMLVPG', 'MTSAC', 'PEARL', 'SAC', 'SRMRL', 'SRMRL_h', 'SkillSAC', 'SkillMTSAC'
+    'MAMLVPG', 'MTSAC', 'PEARL', 'SAC', 'SRMRL'
 ]

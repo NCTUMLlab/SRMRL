@@ -463,7 +463,8 @@ class SRMRL(MetaRLAlgorithm):
         
         if self._dist_class == 'Categorical':
             if self._soft:
-                q_z = D.Categorical(logits=discriminator_out)
+                # q_z = D.Categorical(logits=discriminator_out)
+                q_z = F.softmax(discriminator_out, dim=1)
                 skill_kl = self.kl_divergence(skill_dist.probs, q_z)
             else:
                 q_z = F.softmax(discriminator_out, dim=1)
@@ -536,7 +537,7 @@ class SRMRL(MetaRLAlgorithm):
         if self._dist_class == 'Categorical':
             if self._soft:
                 label = skill_embed.max(dim=-1)[1]
-                discriminator_loss = -torch.mean(skill_dist.probs.detach() * torch.log(F.softmax(discriminator_out, dim=1) + 1e-8))
+                discriminator_loss = -(skill_dist.probs.detach() * torch.log(F.softmax(discriminator_out, dim=-1) + 1e-8)).sum(dim=-1).mean()
                 discriminator_loss += self._policy_mean_reg_coeff * (discriminator_out**2).mean()
             else:
                 label = torch.where(skill_embed==1)[1]

@@ -37,6 +37,7 @@ import os
 @click.option('--embedding_mini_batch_size', default=64)
 @click.option('--dist_class', default='Categorical')
 @click.option('--env_name', default='push-v1')
+@click.option('--soft', default=True)
 @wrap_experiment
 def SRMRL_metaworld_ml1(ctxt=None,
                              seed=1,
@@ -153,7 +154,7 @@ def SRMRL_metaworld_ml1(ctxt=None,
         sampler=sampler,
         dist_class=dist_class,
         soft=soft,
-        gmm=gmm,
+        # gmm=gmm,
         disc_contain_obs=disc_contain_obs,
         v_contain_skill=v_contain_skill,
         num_train_tasks=num_train_tasks,

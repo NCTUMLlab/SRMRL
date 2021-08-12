@@ -5,7 +5,7 @@ from garage.experiment.deterministic import set_seed
 from garage.torch import set_gpu_mode
 from garage.experiment import Snapshotter
 from garage.sampler import DefaultWorker, LocalSampler, WorkerFactory
-from garage.torch.algos.myalgo import MyalgoWorker
+from garage.torch.algos.srmrl import SRMRLWorker
 from garage import EpisodeBatch, TimeStep
 from PIL import Image
 import numpy as np
@@ -41,7 +41,7 @@ def sim_policy(model_dir, output_dir, deterministic=True, n_test_tasks=10, n_exp
                 WorkerFactory(seed=seed,
                               max_episode_length=env.spec.max_episode_length,
                               n_workers=1,
-                              worker_class=MyalgoWorker,
+                              worker_class=SRMRLWorker,
                               worker_args=dict(deterministic=True, accum_context=True)),
                 agents=policy,
                 envs=env)

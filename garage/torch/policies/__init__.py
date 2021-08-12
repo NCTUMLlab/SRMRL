@@ -13,8 +13,6 @@ from garage.torch.policies.tanh_gaussian_mlp_policy import (
     TanhGaussianMLPPolicy)
 from garage.torch.policies.skill_conditioned_policy import (
     SkillConditionedPolicy)
-from garage.torch.policies.skill_policy import (
-    SkillPolicy)
 from garage.torch.policies.tanh_gmm_mlp_policy import (
     TanhGMMMLPPolicy)
 __all__ = [
@@ -27,6 +25,5 @@ __all__ = [
     'TanhGaussianMLPPolicy',
     'ContextConditionedPolicy',
     'SkillConditionedPolicy',
-    'SkillPolicy',
     'TanhGMMMLPPolicy'
 ]
