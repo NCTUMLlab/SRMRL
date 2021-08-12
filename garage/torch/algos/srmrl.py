@@ -1,8 +1,3 @@
-"""PEARL and PEARLWorker in Pytorch.
-
-Code is adapted from https://github.com/katerakelly/oyster.
-"""
-
 import copy
 
 import akro

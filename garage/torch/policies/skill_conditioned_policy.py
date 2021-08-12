@@ -1,10 +1,3 @@
-"""A policy used in training meta reinforcement learning algorithms.
-
-It is used in PEARL (Probabilistic Embeddings for Actor-Critic Reinforcement
-Learning). The paper on PEARL can be found at https://arxiv.org/abs/1903.08254.
-Code is adapted from https://github.com/katerakelly/oyster.
-"""
-
 import numpy as np
 import torch
 from torch import nn
