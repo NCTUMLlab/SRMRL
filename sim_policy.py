@@ -119,8 +119,8 @@ def sim_policy(model_dir, output_dir, deterministic=True, n_test_tasks=10, n_exp
                 break
 
 @click.command()
-@click.argument('model_dir', required=True)
-@click.argument('output_dir', default='.')
+@click.option('--model_dir', required=True)
+@click.option('--output_dir', default='.')
 def main(model_dir, output_dir):
     sim_policy(model_dir, output_dir)
 
