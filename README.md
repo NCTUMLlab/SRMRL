@@ -25,7 +25,7 @@ python sim_policy.py --model_dir=[output_dir]
 This script generate images and gif file of trajectories.
 
 ## Visulization of learned polices
-![](./figs/button-press-topdown-v1-5.gif){:height="30%" width="30%"} ![](./figs/button-press-topdown-v1-7.gif =30%x) ![](./figs/button-press-topdown-v1-8.gif =30%x)
+![](./figs/button-press-topdown-v1-5.gif){:height="20%" width="20%"} ![](./figs/button-press-topdown-v1-7.gif =30%x) ![](./figs/button-press-topdown-v1-8.gif =30%x)
 
 ![](./figs/door-open-v1-0.gif =30%x) ![](./figs/door-open-v1-7.gif =30%x) ![](./figs/door-open-v1-9.gif =30%x)
 
