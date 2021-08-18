@@ -25,13 +25,13 @@ python sim_policy.py --model_dir=[output_dir]
 This script generate images and gif file of trajectories.
 
 ## Visulization of learned polices
-<img src="./figs/button-press-topdown-v1-5.gif" width="300"> <img src="./figs/button-press-topdown-v1-7.gif" width="300"> <img src="./figs/button-press-topdown-v1-8.gif" width="300">
+<img src="./figs/button-press-topdown-v1-5.gif" width="200"> <img src="./figs/button-press-topdown-v1-7.gif" width="200"> <img src="./figs/button-press-topdown-v1-8.gif" width="200">
 
-<img src="./figs/door-open-v1-0.gif" width="300"> <img src="./figs/door-open-v1-9.gif" width="300"> <img src="./figs/door-open-v1-9.gif" width="300">
+<img src="./figs/door-open-v1-0.gif" width="200"> <img src="./figs/door-open-v1-9.gif" width="200"> <img src="./figs/door-open-v1-9.gif" width="200">
 
-<img src="./figs/drawer-close-v1-0.gif" width="300"> <img src="./figs/drawer-close-v1-5.gif" width="300"> <img src="./figs/drawer-close-v1-7.gif" width="300">
+<img src="./figs/drawer-close-v1-0.gif" width="200"> <img src="./figs/drawer-close-v1-5.gif" width="200"> <img src="./figs/drawer-close-v1-7.gif" width="200">
 
-<img src="./figs/push-v1-1.gif" width="300"> <img src="./figs/push-v1-7.gif" width="300"> <img src="./figs/push-v1-9.gif" width="300">
+<img src="./figs/push-v1-1.gif" width="200"> <img src="./figs/push-v1-7.gif" width="200"> <img src="./figs/push-v1-9.gif" width="200">
 
-<img src="./figs/pick-place-v1-0.gif" width="300"> <img src="./figs/pick-place-v1-6.gif.gif" width="300"> <img src="./figs/pick-place-v1-7.gif" width="300">
+<img src="./figs/pick-place-v1-0.gif" width="200"> <img src="./figs/pick-place-v1-6.gif" width="200"> <img src="./figs/pick-place-v1-7.gif" width="200">
 
