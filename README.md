@@ -1,4 +1,4 @@
-# SRMRL: Informative Skill Embeddings for Meta Reinforcement Learning
+# SRMRL: Skill Regularized Meta Reinforcement Learning
 
 This is the implementation of SRMRL and this repository is based on [garage](https://github.com/rlworkgroup/garage).
 
