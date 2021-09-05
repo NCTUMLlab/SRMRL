@@ -9,7 +9,11 @@ Clone this repo and construct a virtual environment via `pipenv install -r requi
 The implementation of SRMRL is placed in `garage/torch/algos/srmrl.py`. Add the `garage` package into your python path with `export PYTHONPATH=.:$PYTHONPATH` in SRMRL directory.
 
 ## Experiments
-To run the experiments,
+To run the experiments, you can use the scripts in `script` folder with
+```
+./script/[filename]
+```
+The script assumes you are in the `SRMRL` directory. Or you can run other tasks using
 ```
 python example/[filename].py --env_name=[env_name]
 ```
