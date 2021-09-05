@@ -25,7 +25,6 @@ import os
 @click.option('--num_test_tasks', default=10)
 @click.option('--num_skills', default=10)
 @click.option('--n_test_episodes', default=5)
-@click.option('--normalize_reward', default=True)
 @click.option('--encoder_hidden_size', default=200)
 @click.option('--net_size', default=300)
 @click.option('--num_steps_per_epoch', default=4000)
@@ -37,7 +36,8 @@ import os
 @click.option('--embedding_mini_batch_size', default=64)
 @click.option('--dist_class', default='Categorical')
 @click.option('--env_name', default='push-v1')
-@click.option('--soft', default=True)
+@click.option('--soft/--hard', default=False)
+@click.option('--v_contain_skill/--v_not_contain_skill', default=True)
 @wrap_experiment
 def SRMRL_metaworld_ml1(ctxt=None,
                              seed=1,
@@ -64,7 +64,6 @@ def SRMRL_metaworld_ml1(ctxt=None,
                              use_gpu=True,
                              normalize_reward=True,
                              soft=False,
-                             gmm=False,
                              disc_contain_obs=True,
                              v_contain_skill=True):
     """Train SRMRL with ML1 environments.
@@ -106,6 +105,7 @@ def SRMRL_metaworld_ml1(ctxt=None,
         v_contain_skill(bool): Whether or not to contain skill embedding in V function input
 
     """
+    print(f'Run {env_name} seed : {seed} soft : {soft} v_contain_skill : {v_contain_skill}')
     set_seed(seed)
     encoder_hidden_sizes = (encoder_hidden_size, encoder_hidden_size,
                             encoder_hidden_size)
@@ -154,7 +154,6 @@ def SRMRL_metaworld_ml1(ctxt=None,
         sampler=sampler,
         dist_class=dist_class,
         soft=soft,
-        # gmm=gmm,
         disc_contain_obs=disc_contain_obs,
         v_contain_skill=v_contain_skill,
         num_train_tasks=num_train_tasks,

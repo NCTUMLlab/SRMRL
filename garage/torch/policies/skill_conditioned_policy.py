@@ -11,7 +11,7 @@ from garage.torch import global_device, product_of_gaussians
 class SkillConditionedPolicy(nn.Module):
     """A policy that outputs actions based on observation and latent context.
 
-    In SRMRL, policies are conditioned on current state, a latent context
+    In SRMRL, policy is conditioned on current state, a latent context
     (adaptation data) variable Z and a skill embedding. This inference network
     estimates theposterior probability of z given past transitions. It uses context
     information stored in the encoder to infer the probabilistic value of z and
@@ -33,13 +33,12 @@ class SkillConditionedPolicy(nn.Module):
         num_skills (int): Dimension of skill embeddings
         dist_class (string): Distribution of skill
         soft (bool): Whether or not to use soft skill embeddings
-        gmm (bool): Whether or not to use gmm policy
 
     """
 
     def __init__(self, latent_dim, context_encoder, skill_encoder, policy,
-                use_information_bottleneck, use_next_obs, H=5, num_skills=10,
-                dist_class='Categorical', soft=False, gmm=True):
+                use_information_bottleneck, use_next_obs, num_skills=10,
+                dist_class='Categorical', soft=False):
         super().__init__()
         self._latent_dim = latent_dim
         self._context_encoder = context_encoder
@@ -47,13 +46,10 @@ class SkillConditionedPolicy(nn.Module):
         self._policy = policy
         self._use_information_bottleneck = use_information_bottleneck
         self._use_next_obs = use_next_obs
-        self._H = H
         self._num_skills=num_skills
-        self._steps = 0
         self._skill_embed = None
         self._dist_class=dist_class
         self._soft=soft
-        self._gmm=gmm
 
         self.register_buffer('z', torch.zeros(1, latent_dim))
         self.register_buffer('z_means', torch.zeros(1, latent_dim))
@@ -223,10 +219,7 @@ class SkillConditionedPolicy(nn.Module):
             policy_in = torch.cat([obs_z, skill_embed], dim=1)
         dist = self._policy(policy_in)[0]
 
-        if self._gmm:
-            pre_tanh, actions = dist.sample_with_pre_tanh_value()
-        else:
-            pre_tanh, actions = dist.rsample_with_pre_tanh_value()
+        pre_tanh, actions = dist.rsample_with_pre_tanh_value()
 
         log_pi = dist.log_prob(value=actions, pre_tanh_value=pre_tanh)
         log_pi = log_pi.unsqueeze(1)
@@ -234,8 +227,6 @@ class SkillConditionedPolicy(nn.Module):
         log_std = (dist.variance**.5).log().to('cpu').detach().numpy()
 
         policy_out = [actions, mean, log_std, log_pi, pre_tanh]
-        if self._gmm:
-            policy_out.append(dist.mix_weights)
         
         return policy_out, task_z, skill_dist, skill_embed, skill_out
 
@@ -258,15 +249,14 @@ class SkillConditionedPolicy(nn.Module):
         z = self.z
         obs = torch.as_tensor(obs[None], device=global_device()).float()
         obs_in = torch.cat([obs, z], dim=1)
-        if self._steps == 0:
-            with torch.no_grad():
-                skill_dist, skill_embed, skill_out = self.infer_skill(obs_in, rsample=False)
-                self._skill_embed = skill_embed
+
+        with torch.no_grad():
+            skill_dist, skill_embed, skill_out = self.infer_skill(obs_in, rsample=False)
+            self._skill_embed = skill_embed
 
         policy_in = torch.cat([obs_in, self._skill_embed], dim=1)
         action, info = self._policy.get_action(policy_in)
 
-        self._steps = (self._steps + 1) % self._H
         return action, info
 
     def compute_kl_div(self):

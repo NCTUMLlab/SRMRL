@@ -80,7 +80,6 @@ class SRMRL(MetaRLAlgorithm):
         update_post_train (int): How often to resample context when obtaining
             data during training (in episodes).
         soft (bool): Whether or not to use soft skill embeddings
-        gmm (bool): Whether or not to use gmm policy
         disc_contain_obs (bool): Whether or not to contain obs in discriminator
         input
         v_contain_skill (bool): Whether or not to contain skill embeddings in
@@ -119,7 +118,6 @@ class SRMRL(MetaRLAlgorithm):
             use_information_bottleneck=True,
             use_next_obs_in_context=False,
             soft=False,
-            gmm=False,
             disc_contain_obs=True,
             v_contain_skill=True,
             meta_batch_size=64,
@@ -154,7 +152,6 @@ class SRMRL(MetaRLAlgorithm):
         self._use_information_bottleneck = use_information_bottleneck
         self._use_next_obs_in_context = use_next_obs_in_context
         self._soft=soft
-        self._gmm=gmm
         self._disc_contain_obs = disc_contain_obs
         self._v_contain_skill = v_contain_skill
 
@@ -241,9 +238,7 @@ class SRMRL(MetaRLAlgorithm):
             use_information_bottleneck=use_information_bottleneck,
             use_next_obs=use_next_obs_in_context,
             dist_class=dist_class,
-            H=1,
-            soft=soft,
-            gmm=gmm)
+            soft=soft)
 
         # buffer for training RL update
         self._replay_buffers = {
@@ -388,8 +383,8 @@ class SRMRL(MetaRLAlgorithm):
         for i in range(self._num_steps_per_epoch):
             indices = np.random.choice(range(self._num_train_tasks),
                                        self._meta_batch_size)
-            show_dist = (i % 1000 == 0)
-            self._optimize_policy(indices, train_loss, show_dist)
+            # show_dist = (i % 1000 == 0)
+            self._optimize_policy(indices, train_loss)
         
         for key, val in train_loss.items():
             tabular.record(key, val / self._num_steps_per_epoch)
@@ -401,7 +396,7 @@ class SRMRL(MetaRLAlgorithm):
         d_kl = (p * torch.log((p / (q + epsilon)) + epsilon)).sum(dim=-1)
         return d_kl
 
-    def _optimize_policy(self, indices, train_loss, show_dist=False):
+    def _optimize_policy(self, indices, train_loss):
         """Perform algorithm optimizing.
 
         Args:
@@ -479,7 +474,7 @@ class SRMRL(MetaRLAlgorithm):
 
         # final reward = env_reward + intrinsic_reward
         if self._soft:
-            rewards_flat -= skill_kl.detach().unsqueeze(dim=-1)
+            rewards_flat -= skill_kl.detach().unsqueeze(dim=-1) #- skill_dist.entropy().detach().unsqueeze(dim=-1)
         else:
             rewards_flat += log_q_z.detach() - log_p_z.detach()
         
@@ -519,12 +514,6 @@ class SRMRL(MetaRLAlgorithm):
             (pre_tanh_value**2).sum(dim=1).mean())
         policy_reg_loss = (mean_reg_loss + std_reg_loss +
                            pre_activation_reg_loss)
-        
-        if self._soft:
-            policy_reg_loss += self._policy_mean_reg_coeff * (skill_out**2).mean()
-        
-        if self._gmm:
-            policy_reg_loss += self._policy_mean_reg_coeff * (policy_outputs[-1]**2).mean()
 
         zero_optim_grads(self._policy_optimizer)
         policy_reg_loss.backward(retain_graph=True)
@@ -532,8 +521,9 @@ class SRMRL(MetaRLAlgorithm):
         if self._dist_class == 'Categorical':
             if self._soft:
                 label = skill_embed.max(dim=-1)[1]
+                # discriminator_loss = -torch.mean(skill_dist.probs.detach() * torch.log(F.softmax(discriminator_out, dim=1) + 1e-8))
                 discriminator_loss = -(skill_dist.probs.detach() * torch.log(F.softmax(discriminator_out, dim=-1) + 1e-8)).sum(dim=-1).mean()
-                discriminator_loss += self._policy_mean_reg_coeff * (discriminator_out**2).mean()
+                # discriminator_loss += 0.1 * (discriminator_out**2).mean()
             else:
                 label = torch.where(skill_embed==1)[1]
                 discriminator_loss = torch.nn.CrossEntropyLoss()(discriminator_out, label)
@@ -541,6 +531,14 @@ class SRMRL(MetaRLAlgorithm):
             discriminator_loss = -log_q_z.mean()
 
         zero_optim_grads(self.skill_optimizer)
+        if self._soft:
+            skill_reg_loss = -0.1*skill_dist.entropy().mean()
+            skill_reg_loss.backward(retain_graph=True)
+            # if show_dist:
+            #     print(f'skill entropy : {skill_dist.entropy().mean()}')
+            #     print(f'skill_reg_loss : {skill_reg_loss}')
+            
+
         zero_optim_grads(self.discriminator_optimizer)
         
         policy_loss.backward()
